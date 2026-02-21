@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Admin · Vote Results</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --ink: #0d0d0d;
+            --paper: #f7f3ee;
+            --saffron: #e8821a;
+            --green: #2d6a4f;
+            --muted: #7a7067;
+        }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--paper);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: linear-gradient(to right, var(--saffron), #fff, var(--green));
+        }
+        .container { max-width: 700px; margin: 0 auto; }
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--ink);
+            margin-bottom: 6px;
+        }
+        .meta { font-size: 14px; color: var(--muted); margin-bottom: 32px; }
+
+        /* Login */
+        #loginBox {
+            background: #fff;
+            padding: 32px;
+            border-radius: 2px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04), 0 20px 60px rgba(0,0,0,0.1);
+            max-width: 380px;
+        }
+        #loginBox h2 { font-size: 18px; margin-bottom: 16px; }
+        #adminKey {
+            width: 100%;
+            padding: 12px 14px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            border: 1.5px solid #ddd;
+            border-radius: 2px;
+            outline: none;
+            margin-bottom: 12px;
+        }
+        #adminKey:focus { border-color: var(--saffron); }
+        .btn {
+            width: 100%;
+            padding: 13px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            color: #fff;
+            background: var(--ink);
+            border: none;
+            border-radius: 2px;
+            cursor: pointer;
+        }
+        .btn:hover { background: #2a2a2a; }
+
+        /* Dashboard */
+        #dashboard { display: none; }
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+        .stat-card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 2px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        }
+        .stat-label { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+        .stat-value { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 700; color: var(--ink); }
+
+        /* Bar chart */
+        .section {
+            background: #fff;
+            border-radius: 2px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+        .section h2 { font-size: 14px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin-bottom: 20px; }
+        .bar-row { margin-bottom: 14px; }
+        .bar-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .bar-label span { color: var(--muted); font-weight: 400; }
+        .bar-track {
+            height: 8px;
+            background: var(--paper);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .bar-fill {
+            height: 100%;
+            background: var(--saffron);
+            border-radius: 4px;
+            transition: width 1s cubic-bezier(0.16,1,0.3,1);
+        }
+
+        /* Recent votes table */
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th { text-align: left; padding: 8px 12px; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid rgba(0,0,0,0.08); }
+        td { padding: 10px 12px; border-bottom: 1px solid rgba(0,0,0,0.05); color: var(--ink); }
+        tr:last-child td { border-bottom: none; }
+        .party-tag {
+            display: inline-block;
+            padding: 2px 10px;
+            background: rgba(232,130,26,0.1);
+            border-radius: 10px;
+            color: var(--saffron);
+            font-weight: 500;
+            font-size: 12px;
+        }
+        .refresh-btn {
+            float: right;
+            font-size: 12px;
+            color: var(--muted);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            margin-top: -2px;
+        }
+        .refresh-btn:hover { color: var(--ink); }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Admin Panel</h1>
+    <p class="meta">Tamil Nadu Vote Poll · Live Results</p>
+
+    <!-- Login -->
+    <div id="loginBox">
+        <h2>Enter Admin Key</h2>
+        <input type="password" id="adminKey" placeholder="Admin password" onkeydown="if(event.key==='Enter')login()">
+        <button class="btn" onclick="login()">Access Dashboard</button>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard">
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-label">Total Votes</div>
+                <div class="stat-value" id="totalVotes">—</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Leading Party</div>
+                <div class="stat-value" id="leadingParty" style="font-size:22px;margin-top:6px;">—</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Results <button class="refresh-btn" onclick="loadData()">↻ Refresh</button></h2>
+            <div id="barsContainer"></div>
+        </div>
+
+        <div class="section">
+            <h2>Recent Votes</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Party</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody id="recentBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+let adminKey = '';
+
+function login() {
+    adminKey = document.getElementById('adminKey').value.trim();
+    if (!adminKey) return;
+    loadData();
+}
+
+async function loadData() {
+    const res = await fetch(`/api/results?key=${encodeURIComponent(adminKey)}`);
+    if (res.status === 401) { alert('Invalid admin key.'); return; }
+    const data = await res.json();
+
+    document.getElementById('loginBox').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+
+    // Stats
+    document.getElementById('totalVotes').textContent = data.total;
+    document.getElementById('leadingParty').textContent = data.totals[0]?.party || '—';
+
+    // Bars
+    const bars = document.getElementById('barsContainer');
+    bars.innerHTML = data.totals.map(p => {
+        const pct = data.total > 0 ? Math.round((p.count / data.total) * 100) : 0;
+        return `
+        <div class="bar-row">
+            <div class="bar-label">${p.party} <span>${p.count} votes · ${pct}%</span></div>
+            <div class="bar-track">
+                <div class="bar-fill" style="width:0%" data-width="${pct}%"></div>
+            </div>
+        </div>`;
+    }).join('');
+
+    // Animate bars
+    setTimeout(() => {
+        document.querySelectorAll('.bar-fill').forEach(el => {
+            el.style.width = el.dataset.width;
+        });
+    }, 100);
+
+    // Recent votes
+    const tbody = document.getElementById('recentBody');
+    tbody.innerHTML = data.recent.map(v => `
+        <tr>
+            <td>${v.name}</td>
+            <td>${v.email}</td>
+            <td><span class="party-tag">${v.party}</span></td>
+            <td>${new Date(v.voted_at).toLocaleString()}</td>
+        </tr>`).join('');
+}
+</script>
+</body>
+</html>
