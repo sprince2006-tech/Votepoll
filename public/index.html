@@ -3,7 +3,9 @@
 <head>
     <title>Tamil Nadu Vote Poll</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         :root {
@@ -12,6 +14,7 @@
             --saffron: #e8821a;
             --green: #2d6a4f;
             --muted: #7a7067;
+            --red: #e53e3e;
         }
         body {
             font-family: 'DM Sans', sans-serif;
@@ -115,7 +118,9 @@
             color: var(--muted);
             margin-bottom: 7px;
         }
-        input[type="text"], input[type="email"] {
+        input[type="text"],
+        input[type="email"],
+        input[type="number"] {
             width: 100%;
             padding: 13px 16px;
             font-family: 'DM Sans', sans-serif;
@@ -129,6 +134,22 @@
         }
         input:focus { border-color: var(--saffron); background: #fff; }
         input::placeholder { color: #bbb; }
+
+        /* Age error box */
+        .age-error {
+            display: none;
+            background: rgba(229,62,62,0.08);
+            border: 1.5px solid rgba(229,62,62,0.3);
+            border-radius: 2px;
+            padding: 12px 16px;
+            margin-bottom: 14px;
+            font-size: 13px;
+            color: var(--red);
+            text-align: center;
+            animation: fadein 0.3s ease;
+        }
+        @keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
+
         .btn {
             width: 100%;
             padding: 14px;
@@ -200,13 +221,14 @@
     <div class="card-header">
         <div class="badge">Live Poll · 2026</div>
         <h1>Enter Your<br>Details</h1>
-        <p class="subtitle">Verify your identity to cast a secure vote.</p>
+        <p class="subtitle">You must be 18 or above to vote.</p>
     </div>
     <div class="card-body">
         <div class="steps">
             <div class="step-dot active"></div>
             <div class="step-dot"></div>
         </div>
+
         <div class="field">
             <label>Full Name</label>
             <input type="text" id="name" placeholder="Enter your name">
@@ -215,11 +237,23 @@
             <label>Email Address</label>
             <input type="email" id="email" placeholder="Enter your email">
         </div>
+        <div class="field">
+            <label>Age</label>
+            <input type="number" id="age" placeholder="Enter your age" min="1" max="120">
+        </div>
+
+        <!-- Age error message -->
+        <div class="age-error" id="ageError">
+            ❌ You must be 18 or above to participate in this vote poll.
+        </div>
+
         <button class="btn" onclick="goToVote()">
             Continue to Vote →
         </button>
+
         <div class="or-divider">or</div>
-        <a href="/auth/google" class="google-btn">
+
+        <a href="#" class="google-btn" id="googleBtn" onclick="googleLogin(event)">
             <svg class="google-icon" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                 <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -230,14 +264,49 @@
         </a>
     </div>
 </div>
+
 <script>
 function goToVote() {
     const name = document.getElementById('name').value.trim();
     const email = document.getElementById('email').value.trim();
+    const age = parseInt(document.getElementById('age').value);
+
     if (!name) { shake('name'); return; }
     if (!email || !email.includes('@')) { shake('email'); return; }
+    if (!age) { shake('age'); return; }
+
+    // Age check
+    if (age < 18) {
+        document.getElementById('ageError').style.display = 'block';
+        shake('age');
+        return;
+    }
+
+    document.getElementById('ageError').style.display = 'none';
     window.location.href = '/auth/google';
 }
+
+function googleLogin(e) {
+    e.preventDefault();
+    const age = parseInt(document.getElementById('age').value);
+
+    if (!age) {
+        shake('age');
+        document.getElementById('ageError').style.display = 'none';
+        alert('Please enter your age first!');
+        return;
+    }
+
+    if (age < 18) {
+        document.getElementById('ageError').style.display = 'block';
+        shake('age');
+        return;
+    }
+
+    document.getElementById('ageError').style.display = 'none';
+    window.location.href = '/auth/google';
+}
+
 function shake(id) {
     const el = document.getElementById(id);
     el.style.borderColor = '#e53e3e';
