@@ -4,10 +4,8 @@
     <title>Tamil Nadu Vote Poll 2026</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
         :root {
             --saffron: #e8821a;
             --saffron2: #f4a44a;
@@ -19,228 +17,86 @@
             --border: rgba(0,0,0,0.08);
             --red: #d63031;
         }
-
-        html, body {
-            height: 100%;
-            font-family: 'Outfit', sans-serif;
-            background: var(--ink);
-            overflow: hidden;
-        }
-
-        #app {
-            width: 100vw;
-            height: 100vh;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .page {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            pointer-events: none;
-            transform: translateY(40px);
-            transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.16,1,0.3,1);
-        }
-
-        .page.active {
-            opacity: 1;
-            pointer-events: all;
-            transform: translateY(0);
-        }
-
-        .page.exit {
-            opacity: 0;
-            transform: translateY(-40px);
-            pointer-events: none;
-        }
+        html, body { height: 100%; font-family: 'Outfit', sans-serif; background: var(--ink); overflow: hidden; }
+        #app { width: 100vw; height: 100vh; position: relative; overflow: hidden; }
+        .page { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transform: translateY(40px); transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.16,1,0.3,1); }
+        .page.active { opacity: 1; pointer-events: all; transform: translateY(0); }
+        .page.exit { opacity: 0; transform: translateY(-40px); pointer-events: none; }
 
         /* PAGE 1 */
-        #page1 {
-            background: var(--ink);
-            flex-direction: column;
-        }
-
-        .grid-bg {
-            position: absolute;
-            inset: 0;
-            background-image:
-                linear-gradient(rgba(232,130,26,0.06) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(232,130,26,0.06) 1px, transparent 1px);
-            background-size: 60px 60px;
-            animation: gridMove 20s linear infinite;
-        }
-
-        @keyframes gridMove {
-            from { background-position: 0 0; }
-            to   { background-position: 60px 60px; }
-        }
-
+        #page1 { background: var(--ink); flex-direction: column; }
+        .grid-bg { position: absolute; inset: 0; background-image: linear-gradient(rgba(232,130,26,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(232,130,26,0.06) 1px, transparent 1px); background-size: 60px 60px; animation: gridMove 20s linear infinite; }
+        @keyframes gridMove { from{background-position:0 0} to{background-position:60px 60px} }
         .glow-orb { position: absolute; border-radius: 50%; filter: blur(80px); pointer-events: none; }
         .orb1 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(232,130,26,0.25) 0%, transparent 70%); top: -100px; right: -100px; animation: orbFloat 8s ease-in-out infinite; }
         .orb2 { width: 300px; height: 300px; background: radial-gradient(circle, rgba(26,92,56,0.2) 0%, transparent 70%); bottom: -80px; left: -80px; animation: orbFloat 10s ease-in-out infinite reverse; }
-
-        @keyframes orbFloat {
-            0%,100% { transform: translate(0,0); }
-            50%     { transform: translate(20px,-20px); }
-        }
-
-        .p1-inner {
-            position: relative;
-            z-index: 2;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            padding: 40px 32px;
-            max-width: 420px;
-            width: 100%;
-        }
-
+        @keyframes orbFloat { 0%,100%{transform:translate(0,0)} 50%{transform:translate(20px,-20px)} }
+        .p1-inner { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 40px 32px; max-width: 420px; width: 100%; }
         .flag-strip { display: flex; gap: 4px; margin-bottom: 32px; animation: slideDown 0.6s cubic-bezier(0.16,1,0.3,1) 0.1s both; }
         .flag-bar { height: 5px; border-radius: 3px; }
         .fb1 { width: 60px; background: var(--saffron); }
         .fb2 { width: 60px; background: #fff; }
         .fb3 { width: 60px; background: var(--green); }
-
-        @keyframes slideDown {
-            from { opacity:0; transform: translateY(-16px); }
-            to   { opacity:1; transform: translateY(0); }
-        }
-
+        @keyframes slideDown { from{opacity:0;transform:translateY(-16px)} to{opacity:1;transform:translateY(0)} }
         .p1-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--saffron); margin-bottom: 18px; animation: slideDown 0.6s cubic-bezier(0.16,1,0.3,1) 0.2s both; }
-
         .p1-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(44px, 10vw, 64px); font-weight: 700; color: var(--white); line-height: 1.05; letter-spacing: -0.02em; margin-bottom: 16px; animation: slideDown 0.6s cubic-bezier(0.16,1,0.3,1) 0.3s both; }
         .p1-title span { color: var(--saffron); font-style: italic; }
-
         .p1-sub { font-size: 15px; color: rgba(255,255,255,0.5); font-weight: 300; line-height: 1.6; max-width: 320px; margin-bottom: 48px; animation: slideDown 0.6s cubic-bezier(0.16,1,0.3,1) 0.4s both; }
-
-        .p1-btn {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            padding: 18px 40px;
-            background: var(--saffron);
-            color: var(--white);
-            font-family: 'Outfit', sans-serif;
-            font-size: 16px;
-            font-weight: 600;
-            border: none;
-            border-radius: 2px;
-            cursor: pointer;
-            letter-spacing: 0.04em;
-            transition: all 0.2s;
-            animation: slideDown 0.6s cubic-bezier(0.16,1,0.3,1) 0.5s both;
-            overflow: hidden;
-        }
-
+        .p1-btn { position: relative; display: inline-flex; align-items: center; gap: 12px; padding: 18px 40px; background: var(--saffron); color: var(--white); font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 600; border: none; border-radius: 2px; cursor: pointer; letter-spacing: 0.04em; transition: all 0.2s; animation: slideDown 0.6s cubic-bezier(0.16,1,0.3,1) 0.5s both; overflow: hidden; }
         .p1-btn::before { content: ''; position: absolute; inset: 0; background: rgba(255,255,255,0.15); transform: translateX(-100%); transition: transform 0.3s ease; }
         .p1-btn:hover::before { transform: translateX(0); }
         .p1-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(232,130,26,0.4); }
         .p1-btn:active { transform: scale(0.98); }
-
         .p1-btn-arrow { width: 22px; height: 22px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; transition: transform 0.2s; }
         .p1-btn:hover .p1-btn-arrow { transform: translateX(4px); }
-
         .p1-stats { display: flex; gap: 32px; margin-top: 48px; animation: slideDown 0.6s cubic-bezier(0.16,1,0.3,1) 0.6s both; }
         .stat { text-align: center; }
         .stat-num { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 700; color: var(--white); }
         .stat-label { font-size: 11px; color: rgba(255,255,255,0.35); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 2px; }
         .stat-divider { width: 1px; background: rgba(255,255,255,0.1); align-self: stretch; }
 
-        /* PAGES 2,3,4 */
-        #page2, #page3, #page4 { background: var(--paper); padding: 20px; overflow-y: auto; }
-
+        /* PAGES 2,3 */
+        #page2, #page3 { background: var(--paper); padding: 20px; overflow-y: auto; }
         .card { width: 100%; max-width: 420px; background: var(--white); border-radius: 3px; box-shadow: 0 4px 6px rgba(0,0,0,0.04), 0 24px 64px rgba(0,0,0,0.12); overflow: hidden; }
-
         .progress-bar { height: 3px; background: #eee; }
         .progress-fill { height: 100%; background: linear-gradient(to right, var(--saffron), var(--saffron2)); transition: width 0.4s cubic-bezier(0.16,1,0.3,1); }
-
         .card-top { padding: 28px 32px 24px; border-bottom: 1px solid var(--border); }
-
         .step-label { font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--saffron); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
         .step-label::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--saffron); animation: pulse 2s ease-in-out infinite; }
         @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.7)} }
-
         .card-title { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 700; color: var(--ink); line-height: 1.2; letter-spacing: -0.01em; }
         .card-sub { margin-top: 6px; font-size: 13px; color: var(--muted); font-weight: 300; }
         .card-body { padding: 28px 32px 32px; }
-
         .back-btn { background: none; border: none; font-family: 'Outfit', sans-serif; font-size: 13px; color: var(--muted); cursor: pointer; display: flex; align-items: center; gap: 6px; margin-bottom: 20px; padding: 0; transition: color 0.2s; }
         .back-btn:hover { color: var(--ink); }
-
         .field { margin-bottom: 16px; }
         .field label { display: block; font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 7px; }
-
         .field input[type="text"],
         .field input[type="email"],
-        .field input[type="date"] {
-            width: 100%; padding: 13px 16px;
-            font-family: 'Outfit', sans-serif; font-size: 15px;
-            color: var(--ink); background: var(--paper);
-            border: 1.5px solid transparent; border-radius: 2px;
-            outline: none; transition: border-color 0.2s, background 0.2s;
-        }
+        .field input[type="date"] { width: 100%; padding: 13px 16px; font-family: 'Outfit', sans-serif; font-size: 15px; color: var(--ink); background: var(--paper); border: 1.5px solid transparent; border-radius: 2px; outline: none; transition: border-color 0.2s, background 0.2s; }
         .field input:focus { border-color: var(--saffron); background: #fff; }
         .field input::placeholder { color: #c0b8b0; }
-
         .or-row { display: flex; align-items: center; gap: 12px; margin: 20px 0; font-size: 12px; color: #ccc; }
         .or-row::before, .or-row::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-
-        .google-btn { width: 100%; padding: 13px 20px; display: flex; align-items: center; justify-content: center; gap: 12px; background: #fff; border: 1.5px solid #e0ddd8; border-radius: 2px; font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 500; color: var(--ink); cursor: pointer; transition: all 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .google-btn { width: 100%; padding: 13px 20px; display: flex; align-items: center; justify-content: center; gap: 12px; background: #fff; border: 1.5px solid #e0ddd8; border-radius: 2px; font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 500; color: var(--ink); cursor: pointer; transition: all 0.2s; text-decoration: none; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
         .google-btn:hover { border-color: #bbb; box-shadow: 0 3px 10px rgba(0,0,0,0.08); transform: translateY(-1px); }
         .google-logo { width: 20px; height: 20px; flex-shrink: 0; }
-
         .btn { width: 100%; padding: 15px; margin-top: 10px; font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 600; letter-spacing: 0.03em; color: #fff; background: var(--ink); border: none; border-radius: 2px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .btn:hover { background: #222; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
         .btn:active { transform: scale(0.99); }
         .btn:disabled { background: #ddd; color: #aaa; cursor: not-allowed; transform: none; box-shadow: none; }
 
-        .user-strip { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: var(--paper); border-radius: 2px; margin-bottom: 20px; }
-        .user-avatar { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, var(--saffron), var(--saffron2)); display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; color: #fff; flex-shrink: 0; }
-        .u-name  { font-size: 14px; font-weight: 500; color: var(--ink); }
-        .u-email { font-size: 11px; color: var(--muted); margin-top: 1px; }
-        .g-badge { margin-left: auto; background: #e8f5e9; color: var(--green); font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
-
         /* Page 3 - DOB */
         .dob-display { text-align: center; padding: 20px 0 8px; }
         .dob-age-number { font-family: 'Cormorant Garamond', serif; font-size: 72px; font-weight: 700; color: var(--ink); line-height: 1; transition: color 0.3s; }
         .dob-age-label { font-size: 13px; color: var(--muted); margin-top: 4px; }
-
         .age-status { margin-top: 14px; font-size: 13px; padding: 11px 16px; border-radius: 2px; display: none; align-items: center; gap: 8px; }
         .age-status.ok  { background: #e8f5e9; color: var(--green); display: flex; }
-        .age-status.bad { background: #fff0f0; color: var(--red);   display: flex; }
-
+        .age-status.bad { background: #fff0f0; color: var(--red); display: flex; }
         .blocked-box { display: none; background: #fff0f0; border: 1.5px solid #ffcdd2; border-radius: 2px; padding: 20px; text-align: center; margin-top: 12px; }
-        .blocked-icon  { font-size: 38px; margin-bottom: 10px; }
+        .blocked-icon { font-size: 38px; margin-bottom: 10px; }
         .blocked-title { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 700; color: var(--red); margin-bottom: 4px; }
         .blocked-sub { font-size: 13px; color: #b71c1c; line-height: 1.5; }
-
-        /* Page 4 - Vote */
-        .party-grid { display: flex; flex-direction: column; gap: 10px; margin-bottom: 6px; }
-
-        .party-label { display: flex; align-items: center; gap: 14px; padding: 15px 16px; background: var(--paper); border: 1.5px solid transparent; border-radius: 2px; cursor: pointer; transition: all 0.2s; }
-        .party-label:hover { border-color: rgba(232,130,26,0.3); background: rgba(232,130,26,0.04); }
-
-        .party-label input[type="radio"] { appearance: none; width: 18px; height: 18px; border: 2px solid #ccc; border-radius: 50%; flex-shrink: 0; transition: all 0.2s; }
-        .party-label input[type="radio"]:checked { border-color: var(--saffron); background: var(--saffron); box-shadow: inset 0 0 0 3px #fff; }
-        .party-label:has(input:checked) { border-color: var(--saffron); background: rgba(232,130,26,0.06); }
-
-        .p-name { font-size: 15px; font-weight: 600; color: var(--ink); flex: 1; }
-        .p-full { font-size: 11px; color: var(--muted); font-weight: 300; margin-top: 2px; }
-        .p-meta { display: flex; flex-direction: column; }
-
-        /* Success */
-        .success-wrap { display: none; text-align: center; padding: 30px 0; animation: popIn 0.5s cubic-bezier(0.16,1,0.3,1) both; }
-        @keyframes popIn { from{opacity:0;transform:scale(0.8)} to{opacity:1;transform:scale(1)} }
-        .success-emoji { font-size: 56px; margin-bottom: 16px; display: block; }
-        .success-title { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
-        .success-sub { font-size: 14px; color: var(--muted); line-height: 1.5; }
-        .success-divider { height: 1px; background: var(--border); margin: 20px 0; }
 
         @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 60%{transform:translateX(6px)} }
     </style>
@@ -290,47 +146,31 @@
         <div class="card">
             <div class="progress-bar"><div class="progress-fill" style="width:33%"></div></div>
             <div class="card-top">
-                <div class="step-label">Step 1 of 3</div>
+                <div class="step-label">Step 1 of 2</div>
                 <div class="card-title">Who are you?</div>
                 <div class="card-sub">Enter your details or sign in with Google.</div>
             </div>
             <div class="card-body">
                 <button class="back-btn" onclick="goToPage(1)">← Back</button>
-
-                <div id="manualForm">
-                    <div class="field">
-                        <label>Full Name</label>
-                        <input type="text" id="name" placeholder="Enter your full name">
-                    </div>
-                    <div class="field">
-                        <label>Email Address</label>
-                        <input type="email" id="email" placeholder="Enter your email">
-                    </div>
-                    <button class="btn" onclick="manualNext()">Continue →</button>
-                    <div class="or-row">or</div>
-                    <div id="g_id_onload" data-client_id="477965489245-9g544g7e7qsmqlvc5j8nmgt1fdhf1ilh.apps.googleusercontent.com" data-callback="handleGoogleSignIn" data-auto_prompt="false"></div>
-                    <button class="google-btn" onclick="triggerGoogle()">
-                        <svg class="google-logo" viewBox="0 0 24 24">
-                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
-                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-                        </svg>
-                        Sign in with Google
-                    </button>
+                <div class="field">
+                    <label>Full Name</label>
+                    <input type="text" id="name" placeholder="Enter your full name">
                 </div>
-
-                <div id="googleStrip" style="display:none">
-                    <div class="user-strip">
-                        <div class="user-avatar" id="userInitial">?</div>
-                        <div>
-                            <div class="u-name"  id="gName">—</div>
-                            <div class="u-email" id="gEmail">—</div>
-                        </div>
-                        <div class="g-badge">✓ Google</div>
-                    </div>
-                    <button class="btn" onclick="goToPage(3)">Continue →</button>
+                <div class="field">
+                    <label>Email Address</label>
+                    <input type="email" id="email" placeholder="Enter your email">
                 </div>
+                <button class="btn" onclick="manualNext()">Continue →</button>
+                <div class="or-row">or</div>
+                <a href="/auth/google" class="google-btn">
+                    <svg class="google-logo" viewBox="0 0 24 24">
+                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                    </svg>
+                    Sign in with Google
+                </a>
             </div>
         </div>
     </div>
@@ -340,7 +180,7 @@
         <div class="card">
             <div class="progress-bar"><div class="progress-fill" style="width:66%"></div></div>
             <div class="card-top">
-                <div class="step-label">Step 2 of 3</div>
+                <div class="step-label">Step 2 of 2</div>
                 <div class="card-title">Age Verification</div>
                 <div class="card-sub">You must be 18 or older to participate.</div>
             </div>
@@ -361,52 +201,7 @@
                     <div class="blocked-title">Not Eligible</div>
                     <div class="blocked-sub">You must be at least <strong>18 years old</strong> to participate in this poll.</div>
                 </div>
-                <button class="btn" id="ageBtn" onclick="goToPage(4)" disabled>Proceed to Vote →</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- PAGE 4: VOTE POLL -->
-    <div class="page" id="page4">
-        <div class="card">
-            <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
-            <div class="card-top">
-                <div class="step-label">Step 3 of 3</div>
-                <div class="card-title">Cast Your Vote</div>
-                <div class="card-sub">Select a party and submit your vote.</div>
-            </div>
-            <div class="card-body">
-                <button class="back-btn" id="p4back" onclick="goToPage(3)">← Back</button>
-
-                <div id="voteForm">
-                    <div class="party-grid">
-                        <label class="party-label">
-                            <input type="radio" name="party" value="DMK">
-                            <div class="p-meta"><span class="p-name">DMK</span><span class="p-full">Dravida Munnetra Kazhagam</span></div>
-                        </label>
-                        <label class="party-label">
-                            <input type="radio" name="party" value="ADMK">
-                            <div class="p-meta"><span class="p-name">ADMK</span><span class="p-full">All India Anna Dravida Munnetra Kazhagam</span></div>
-                        </label>
-                        <label class="party-label">
-                            <input type="radio" name="party" value="TVK">
-                            <div class="p-meta"><span class="p-name">TVK</span><span class="p-full">Tamilaga Vettri Kazhagam</span></div>
-                        </label>
-                        <label class="party-label">
-                            <input type="radio" name="party" value="NTK">
-                            <div class="p-meta"><span class="p-name">NTK</span><span class="p-full">Nam Tamilar Katchi</span></div>
-                        </label>
-                    </div>
-                    <button class="btn" onclick="submitVote()">Submit Vote ✓</button>
-                </div>
-
-                <div class="success-wrap" id="successWrap">
-                    <span class="success-emoji">🎉</span>
-                    <div class="success-title">Vote Recorded!</div>
-                    <p class="success-sub">Thank you for participating in the Tamil Nadu Vote Poll 2026.</p>
-                    <div class="success-divider"></div>
-                    <button class="btn" onclick="closeWindow()">Close ✕</button>
-                </div>
+                <button class="btn" id="ageBtn" onclick="proceedToVote()" disabled>Proceed to Vote →</button>
             </div>
         </div>
     </div>
@@ -414,45 +209,23 @@
 </div>
 
 <script>
-    let currentUser = { name: '', email: '' };
-
     function goToPage(n) {
-        const all = document.querySelectorAll('.page');
-        all.forEach(p => p.classList.remove('active', 'exit'));
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active', 'exit'));
         document.getElementById('page' + n).classList.add('active');
     }
 
     function manualNext() {
-        const name  = document.getElementById("name").value.trim();
-        const email = document.getElementById("email").value.trim();
-        if (!name)  shake("name");
-        if (!email || !email.includes("@")) shake("email");
-        if (!name || !email || !email.includes("@")) return;
-        currentUser = { name, email };
+        const name  = document.getElementById('name').value.trim();
+        const email = document.getElementById('email').value.trim();
+        if (!name)  { shake('name'); }
+        if (!email || !email.includes('@')) { shake('email'); }
+        if (!name || !email || !email.includes('@')) return;
         goToPage(3);
     }
 
-    function handleGoogleSignIn(response) {
-        const payload = JSON.parse(atob(response.credential.split('.')[1]));
-        currentUser = { name: payload.name, email: payload.email };
-        document.getElementById("gName").textContent  = payload.name;
-        document.getElementById("gEmail").textContent = payload.email;
-        document.getElementById("userInitial").textContent = payload.name.charAt(0).toUpperCase();
-        document.getElementById("manualForm").style.display  = "none";
-        document.getElementById("googleStrip").style.display = "block";
-    }
-
-    function triggerGoogle() {
-        if (typeof google !== 'undefined' && google.accounts) {
-            google.accounts.id.prompt();
-        } else {
-            alert("⚠️ Google Sign-In is not available. Please try again later.");
-        }
-    }
-
     function checkAge() {
-        document.getElementById("dob").max = new Date().toISOString().split("T")[0];
-        const dobVal = document.getElementById("dob").value;
+        document.getElementById('dob').max = new Date().toISOString().split('T')[0];
+        const dobVal = document.getElementById('dob').value;
         if (!dobVal) return;
         const dob = new Date(dobVal);
         const today = new Date();
@@ -460,70 +233,49 @@
         const m = today.getMonth() - dob.getMonth();
         if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
 
-        document.getElementById("dobDisplay").style.display = "block";
-        document.getElementById("ageNum").textContent = age;
+        document.getElementById('dobDisplay').style.display = 'block';
+        document.getElementById('ageNum').textContent = age;
 
-        const okEl    = document.getElementById("ageOk");
-        const badEl   = document.getElementById("ageBad");
-        const blocked = document.getElementById("blockedBox");
-        const btn     = document.getElementById("ageBtn");
+        const okEl   = document.getElementById('ageOk');
+        const badEl  = document.getElementById('ageBad');
+        const blocked = document.getElementById('blockedBox');
+        const btn    = document.getElementById('ageBtn');
 
         if (age >= 18) {
-            document.getElementById("ageNum").style.color = "#1a5c38";
-            okEl.textContent = "✅  Age " + age + " — You are eligible to vote.";
-            okEl.className = "age-status ok";
-            badEl.style.display  = "none";
-            blocked.style.display = "none";
+            document.getElementById('ageNum').style.color = '#1a5c38';
+            okEl.textContent = '✅  Age ' + age + ' — You are eligible to vote.';
+            okEl.className = 'age-status ok';
+            badEl.style.display   = 'none';
+            blocked.style.display = 'none';
             btn.disabled = false;
         } else {
-            document.getElementById("ageNum").style.color = "#d63031";
-            badEl.textContent = "✗  Age " + age + " — You must be 18 or older.";
-            badEl.className = "age-status bad";
-            okEl.style.display   = "none";
-            blocked.style.display = "block";
+            document.getElementById('ageNum').style.color = '#d63031';
+            badEl.textContent = '✗  Age ' + age + ' — You must be 18 or older.';
+            badEl.className = 'age-status bad';
+            okEl.style.display    = 'none';
+            blocked.style.display = 'block';
             btn.disabled = true;
         }
     }
 
+    function proceedToVote() {
+        // Age verified — redirect to Google OAuth
+        window.location.href = '/auth/google';
+    }
+
     window.addEventListener('load', () => {
-        document.getElementById("dob").max = new Date().toISOString().split("T")[0];
+        document.getElementById('dob').max = new Date().toISOString().split('T')[0];
     });
-
-    function submitVote() {
-        const partyRadio = document.querySelector('input[name="party"]:checked');
-        if (!partyRadio) {
-            document.querySelector('.party-grid').style.outline = "2px solid #e8821a";
-            setTimeout(() => document.querySelector('.party-grid').style.outline = "", 1500);
-            return;
-        }
-        const party = partyRadio.value;
-
-        // ── YOUR GOOGLE FORM URL (no change needed) ──
-        const formURL = "https://docs.google.com/forms/d/e/1FAIpQLScmdTxxmqOJyV-yj3HkOfE7phnLPnOG1r0mY5asCP9uAFYlQg/formResponse";
-        const formData = new FormData();
-        formData.append("entry.1441506582", currentUser.name);
-        formData.append("entry.161468659",  currentUser.email);
-        formData.append("entry.18020214",   party);
-        fetch(formURL, { method: "POST", mode: "no-cors", body: formData });
-
-        document.getElementById("voteForm").style.display    = "none";
-        document.getElementById("successWrap").style.display = "block";
-        document.getElementById("p4back").style.display      = "none";
-    }
-
-    function closeWindow() {
-        window.close();
-        document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:Outfit,sans-serif;color:#6b6b6b;font-size:15px;">You may now close this tab. Thank you for voting!</div>';
-    }
 
     function shake(id) {
         const el = document.getElementById(id);
-        el.style.borderColor = "#d63031";
-        el.style.animation = "none";
+        el.style.borderColor = '#d63031';
+        el.style.animation = 'none';
         void el.offsetWidth;
-        el.style.animation = "shake 0.4s ease";
-        setTimeout(() => { el.style.borderColor = ""; el.style.animation = ""; }, 500);
+        el.style.animation = 'shake 0.4s ease';
+        setTimeout(() => { el.style.borderColor = ''; el.style.animation = ''; }, 500);
     }
 </script>
 </body>
 </html>
+
