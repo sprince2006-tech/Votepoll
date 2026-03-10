@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Age Verification · Vote Poll</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --saffron: #e8821a; --saffron2: #f4a44a; --green: #1a5c38;
+            --ink: #0f0f0f; --muted: #6b6b6b; --paper: #faf8f5;
+            --border: rgba(0,0,0,0.08); --red: #d63031;
+        }
+        html, body { height: 100%; font-family: 'Outfit', sans-serif; background: var(--paper); display: flex; align-items: center; justify-content: center; padding: 20px; }
+        body::after { content: ''; position: fixed; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(to right, var(--saffron), #fff, var(--green)); }
+        body::before { content: ''; position: fixed; inset: 0; background: radial-gradient(ellipse 60% 50% at 80% 20%, rgba(232,130,26,0.08) 0%, transparent 70%), radial-gradient(ellipse 50% 60% at 20% 80%, rgba(26,92,56,0.07) 0%, transparent 70%); pointer-events: none; }
+
+        .card { width: 100%; max-width: 420px; background: #fff; border-radius: 3px; box-shadow: 0 4px 6px rgba(0,0,0,0.04), 0 24px 64px rgba(0,0,0,0.12); overflow: hidden; animation: rise 0.6s cubic-bezier(0.16,1,0.3,1) both; }
+        @keyframes rise { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+        .progress-bar { height: 3px; background: #eee; }
+        .progress-fill { height: 100%; width: 75%; background: linear-gradient(to right, var(--saffron), var(--saffron2)); }
+        .card-top { padding: 28px 32px 24px; border-bottom: 1px solid var(--border); }
+        .step-label { font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--saffron); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+        .step-label::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--saffron); animation: pulse 2s ease-in-out infinite; }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+        .card-title { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 700; color: var(--ink); line-height: 1.2; }
+        .card-sub { margin-top: 6px; font-size: 13px; color: var(--muted); font-weight: 300; }
+
+        .card-body { padding: 28px 32px 32px; }
+
+        /* User strip */
+        .user-strip { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: var(--paper); border-radius: 2px; margin-bottom: 20px; }
+        .user-avatar { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, var(--saffron), var(--saffron2)); display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; color: #fff; flex-shrink: 0; }
+        .u-name { font-size: 14px; font-weight: 500; color: var(--ink); }
+        .u-email { font-size: 11px; color: var(--muted); margin-top: 1px; }
+        .g-badge { margin-left: auto; background: #e8f5e9; color: var(--green); font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
+
+        .field { margin-bottom: 16px; }
+        .field label { display: block; font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 7px; }
+        .field input[type="date"] { width: 100%; padding: 13px 16px; font-family: 'Outfit', sans-serif; font-size: 15px; color: var(--ink); background: var(--paper); border: 1.5px solid transparent; border-radius: 2px; outline: none; transition: border-color 0.2s; }
+        .field input:focus { border-color: var(--saffron); background: #fff; }
+
+        .dob-display { text-align: center; padding: 20px 0 8px; }
+        .dob-age-number { font-family: 'Cormorant Garamond', serif; font-size: 72px; font-weight: 700; line-height: 1; transition: color 0.3s; }
+        .dob-age-label { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+        .age-status { margin-top: 14px; font-size: 13px; padding: 11px 16px; border-radius: 2px; display: none; align-items: center; gap: 8px; }
+        .age-status.ok  { background: #e8f5e9; color: var(--green); display: flex; }
+        .age-status.bad { background: #fff0f0; color: var(--red); display: flex; }
+
+        .blocked-box { display: none; background: #fff0f0; border: 1.5px solid #ffcdd2; border-radius: 2px; padding: 20px; text-align: center; margin-top: 12px; }
+        .blocked-icon { font-size: 38px; margin-bottom: 10px; }
+        .blocked-title { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 700; color: var(--red); margin-bottom: 4px; }
+        .blocked-sub { font-size: 13px; color: #b71c1c; line-height: 1.5; }
+
+        .btn { width: 100%; padding: 15px; margin-top: 10px; font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 600; color: #fff; background: var(--ink); border: none; border-radius: 2px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn:hover { background: #222; transform: translateY(-1px); }
+        .btn:disabled { background: #ddd; color: #aaa; cursor: not-allowed; transform: none; }
+        .logout-link { display: block; text-align: center; margin-top: 14px; font-size: 12px; color: var(--muted); text-decoration: none; }
+        .logout-link:hover { color: var(--ink); }
+    </style>
+</head>
+<body>
+<div class="card">
+    <div class="progress-bar"><div class="progress-fill"></div></div>
+    <div class="card-top">
+        <div class="step-label">Step 2 of 3</div>
+        <div class="card-title">Age Verification</div>
+        <div class="card-sub">You must be 18 or older to participate.</div>
+    </div>
+    <div class="card-body">
+
+        <!-- Shows logged in Google user -->
+        <div class="user-strip">
+            <div class="user-avatar" id="userInitial">?</div>
+            <div>
+                <div class="u-name" id="userName">Loading...</div>
+                <div class="u-email" id="userEmail"></div>
+            </div>
+            <div class="g-badge">✓ Google</div>
+        </div>
+
+        <div class="field">
+            <label>Date of Birth</label>
+            <input type="date" id="dob" onchange="checkAge()">
+        </div>
+
+        <div class="dob-display" id="dobDisplay" style="display:none">
+            <div class="dob-age-number" id="ageNum">—</div>
+            <div class="dob-age-label">years old</div>
+        </div>
+
+        <div class="age-status" id="ageOk"></div>
+        <div class="age-status" id="ageBad"></div>
+
+        <div class="blocked-box" id="blockedBox">
+            <div class="blocked-icon">🚫</div>
+            <div class="blocked-title">Not Eligible</div>
+            <div class="blocked-sub">You must be at least <strong>18 years old</strong> to participate in this poll.</div>
+        </div>
+
+        <button class="btn" id="ageBtn" onclick="proceedToVote()" disabled>Proceed to Vote →</button>
+        <a href="/auth/logout" class="logout-link">← Sign out and go back</a>
+    </div>
+</div>
+
+<script>
+// Load Google user info
+fetch('/api/me')
+    .then(r => r.json())
+    .then(data => {
+        document.getElementById('userName').textContent  = data.name;
+        document.getElementById('userEmail').textContent = data.email;
+        document.getElementById('userInitial').textContent = data.name.charAt(0).toUpperCase();
+        // If already voted, skip to vote page
+        if (data.voted) window.location.href = '/vote';
+    })
+    .catch(() => window.location.href = '/');
+
+window.addEventListener('load', () => {
+    document.getElementById('dob').max = new Date().toISOString().split('T')[0];
+});
+
+function checkAge() {
+    const dobVal = document.getElementById('dob').value;
+    if (!dobVal) return;
+    const dob   = new Date(dobVal);
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    const m = today.getMonth() - dob.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+
+    document.getElementById('dobDisplay').style.display = 'block';
+    document.getElementById('ageNum').textContent = age;
+
+    const okEl    = document.getElementById('ageOk');
+    const badEl   = document.getElementById('ageBad');
+    const blocked = document.getElementById('blockedBox');
+    const btn     = document.getElementById('ageBtn');
+
+    if (age >= 18) {
+        document.getElementById('ageNum').style.color = '#1a5c38';
+        okEl.textContent = '✅  Age ' + age + ' — You are eligible to vote.';
+        okEl.className = 'age-status ok';
+        badEl.style.display   = 'none';
+        blocked.style.display = 'none';
+        btn.disabled = false;
+    } else {
+        document.getElementById('ageNum').style.color = '#d63031';
+        badEl.textContent = '✗  Age ' + age + ' — You must be 18 or older.';
+        badEl.className = 'age-status bad';
+        okEl.style.display    = 'none';
+        blocked.style.display = 'block';
+        btn.disabled = true;
+    }
+}
+
+async function proceedToVote() {
+    const dob = document.getElementById('dob').value;
+    if (!dob) return;
+    const btn = document.getElementById('ageBtn');
+    btn.disabled = true;
+    btn.textContent = 'Verifying...';
+    try {
+        const res  = await fetch('/api/verify-age', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ dob })
+        });
+        const data = await res.json();
+        if (res.ok) {
+            window.location.href = '/vote';
+        } else {
+            alert(data.error);
+            btn.disabled = false;
+            btn.textContent = 'Proceed to Vote →';
+        }
+    } catch (e) {
+        alert('Something went wrong. Please try again.');
+        btn.disabled = false;
+        btn.textContent = 'Proceed to Vote →';
+    }
+}
+</script>
+</body>
+</html>
