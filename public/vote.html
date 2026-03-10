@@ -343,12 +343,7 @@ async function submitVote() {
 }
 
 function closeWindow() {
-    window.close();
-    document.body.innerHTML = `
-        <div style="display:flex;align-items:center;justify-content:center;height:100vh;
-             font-family:'DM Sans',sans-serif;color:#7a7067;font-size:15px;">
-            You may now close this tab. Thank you for voting!
-        </div>`;
+    window.location.href = '/';
 }
 </script>
 </body>
