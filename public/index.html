@@ -308,7 +308,7 @@
                     </div>
                     <button class="btn" onclick="manualNext()">Continue →</button>
                     <div class="or-row">or</div>
-                    <div id="g_id_onload" data-client_id="YOUR_GOOGLE_CLIENT_ID" data-callback="handleGoogleSignIn" data-auto_prompt="false"></div>
+                    <div id="g_id_onload" data-client_id="477965489245-9g544g7e7qsmqlvc5j8nmgt1fdhf1ilh.apps.googleusercontent.com" data-callback="handleGoogleSignIn" data-auto_prompt="false"></div>
                     <button class="google-btn" onclick="triggerGoogle()">
                         <svg class="google-logo" viewBox="0 0 24 24">
                             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -446,7 +446,7 @@
         if (typeof google !== 'undefined' && google.accounts) {
             google.accounts.id.prompt();
         } else {
-            alert("⚠️ Replace YOUR_GOOGLE_CLIENT_ID with your real Client ID from Google Cloud Console.");
+            alert("⚠️ Google Sign-In is not available. Please try again later.");
         }
     }
 
