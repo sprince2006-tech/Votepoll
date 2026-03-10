@@ -8,7 +8,7 @@ const path = require('path');
 
 const app = express();
 
-// ─── Database Setup (PostgreSQL) ──────────────────────────────────
+// ─── Database Setup ───────────────────────────────────────────────
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
@@ -75,16 +75,47 @@ app.get('/auth/google',
   passport.authenticate('google', { scope: ['profile', 'email'] })
 );
 
+// ── After Google login → check age verified ──
 app.get('/auth/google/callback',
   passport.authenticate('google', { failureRedirect: '/' }),
-  (req, res) => res.redirect('/vote')
+  (req, res) => {
+    if (!req.session.ageVerified) return res.redirect('/verify-age');
+    res.redirect('/vote');
+  }
 );
 
 app.get('/auth/logout', (req, res) => {
-  req.logout(() => res.redirect('/'));
+  req.logout(() => {
+    req.session.ageVerified = false;
+    res.redirect('/');
+  });
 });
 
-// ─── API: Get current user status ─────────────────────────────────
+// ─── Age Verification ─────────────────────────────────────────────
+app.get('/verify-age', isLoggedIn, (req, res) => {
+  if (req.session.ageVerified) return res.redirect('/vote');
+  res.sendFile(path.join(__dirname, 'public', 'verify-age.html'));
+});
+
+app.post('/api/verify-age', isLoggedIn, (req, res) => {
+  const { dob } = req.body;
+  if (!dob) return res.status(400).json({ error: 'DOB required' });
+
+  const today = new Date();
+  const birth = new Date(dob);
+  let age = today.getFullYear() - birth.getFullYear();
+  const m = today.getMonth() - birth.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+
+  if (age < 18) {
+    return res.status(403).json({ error: 'You must be 18 or older to vote.' });
+  }
+
+  req.session.ageVerified = true;
+  res.json({ success: true, age });
+});
+
+// ─── API: Get current user ────────────────────────────────────────
 app.get('/api/me', isLoggedIn, async (req, res) => {
   const user = req.user;
   const result = await pool.query(
@@ -96,15 +127,17 @@ app.get('/api/me', isLoggedIn, async (req, res) => {
 
 // ─── API: Submit Vote ─────────────────────────────────────────────
 app.post('/api/vote', isLoggedIn, async (req, res) => {
+  if (!req.session.ageVerified) {
+    return res.status(403).json({ error: 'Age not verified.' });
+  }
+
   const { party } = req.body;
   const validParties = ['DMK', 'ADMK', 'TVK', 'NTK'];
-
   if (!validParties.includes(party)) {
     return res.status(400).json({ error: 'Invalid party selection.' });
   }
 
   const user = req.user;
-
   const existing = await pool.query(
     'SELECT id FROM votes WHERE google_id = $1', [user.googleId]
   );
@@ -130,7 +163,7 @@ app.get('/api/results', isAdmin, async (req, res) => {
   );
   const total = await pool.query('SELECT COUNT(*) as total FROM votes');
   const recent = await pool.query(
-    'SELECT name, email, party, voted_at FROM votes ORDER BY voted_at DESC LIMIT 20'
+    'SELECT name, email, party, voted_at FROM votes ORDER BY voted_at DESC'
   );
   res.json({
     totals: totals.rows,
@@ -146,6 +179,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/vote', isLoggedIn, (req, res) => {
+  if (!req.session.ageVerified) return res.redirect('/verify-age');
   res.sendFile(path.join(__dirname, 'public', 'vote.html'));
 });
 
