@@ -189,4 +189,12 @@ app.get('/admin', (req, res) => {
 
 // ─── Start ────────────────────────────────────────────────────────
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`✅ Server running at http://localhost:${PORT}`));
+app.listen(PORT, () => {
+  console.log(`✅ Server running at http://localhost:${PORT}`);
+  // Keep alive - prevent Render from sleeping
+  if (process.env.NODE_ENV === 'production') {
+    setInterval(() => {
+      fetch('https://votepoll-1.onrender.com/').catch(() => {});
+    }, 14 * 60 * 1000); // ping every 14 minutes
+  }
+});
